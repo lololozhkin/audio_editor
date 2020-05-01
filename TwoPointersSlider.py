@@ -55,7 +55,7 @@ class TwoPointersSlider(QWidget):
 
         self.first_pointer_pos = 0
         self.second_pointer_pos = 100
-        self.main_pointer_pos = 50
+        self.main_pointer_pos = 0
         self.maximum = 100
 
         self.mainPosChanged.connect(lambda x: self.update())
@@ -94,7 +94,7 @@ class TwoPointersSlider(QWidget):
         self.maximum = val
         self.first_pointer_pos = 0
         self.second_pointer_pos = self.maximum
-        self.main_pointer_pos = self.maximum // 2
+        self.main_pointer_pos = 0
 
     def paintEvent(self, e: QtGui.QPaintEvent):
         painter = QPainter(self)

@@ -117,7 +117,6 @@ class CutDialog(QDialog):
             self.play_pause_button.setEnabled(True)
 
             self.cut_slider.set_maximum(self.player.duration())
-            self.player.setPosition(self.cut_slider.main_pointer_pos)
 
         elif (state == QtMultimedia.QMediaPlayer.InvalidMedia or
               state == QtMultimedia.QMediaPlayer.NoMedia):
