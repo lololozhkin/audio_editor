@@ -1,14 +1,16 @@
 import sys
-import os
 from PyQt5 import QtMultimedia
 from PyQt5.QtWidgets import QListWidget, QAction, QMenu, \
     QFileDialog, QVBoxLayout, QHBoxLayout, QPushButton, QWidget, QSlider, \
     QMainWindow, QApplication
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QEvent, QObject, QUrl
+from PlayerInside import PlayerInside
+from CutDIalog import CutDialog
+from ConcatenateWidget import ConcatenateWidget
 
 
-class MyWindow(QMainWindow):
+class AudioEditor(QMainWindow):
     def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
         self.statusBar()
@@ -21,7 +23,14 @@ class MyWindow(QMainWindow):
         self.delete_file.triggered.connect(
             lambda: self.delete_files(self.list_widget.selectedIndexes()))
 
+        self.cut_file.setShortcut('Ctrl+K')
+        self.cut_file.triggered.connect(self.on_cut_file)
+
+        self.concatenate_action.triggered.connect(self.on_concatenate)
+
         self.context_menu.addAction(self.play_action)
+        self.context_menu.addAction(self.cut_file)
+        self.context_menu.addAction(self.concatenate_action)
         self.context_menu.addAction(self.delete_file)
 
         self.open_file.setShortcut('Ctrl+O')
@@ -40,13 +49,15 @@ class MyWindow(QMainWindow):
         self.play_pause_button.clicked.connect(self.play_pause_on_clicked)
         self.stop_button.clicked.connect(self.q_player.stop)
 
-        self.time_slider.valueChanged.connect(self.q_player.setPosition)
+        self.time_slider.sliderMoved.connect(self.q_player.setPosition)
         self.volume_slider.valueChanged.connect(self.q_player.setVolume)
 
         self.q_player.positionChanged.connect(self.time_slider.setValue)
         self.q_player.volumeChanged.connect(self.volume_slider.setValue)
 
         self.q_player.setVolume(50)
+
+        self.concatenate_widget.concatenate_finished.connect(self.concatenate)
 
         self.hbox.addWidget(self.play_pause_button)
         self.hbox.addWidget(self.stop_button)
@@ -55,6 +66,7 @@ class MyWindow(QMainWindow):
         self.vbox.addWidget(self.list_widget)
         self.vbox.addLayout(self.hbox)
         self.vbox.addWidget(self.time_slider)
+        self.vbox.addWidget(self.concatenate_widget)
         buf_widget = QWidget(self)
         buf_widget.setLayout(self.vbox)
         self.setCentralWidget(buf_widget)
@@ -71,6 +83,9 @@ class MyWindow(QMainWindow):
         self.open_file = QAction(QIcon('img/open.png'), 'Add file', self)
         self.open_file.setStatusTip('Open new file')
 
+        self.cut_file = QAction(QIcon('img/cut.png'), 'Cut file', self)
+        self.cut_file.setStatusTip('Cut file')
+
         self.delete_file = QAction(QIcon('img/delete.png'),
                                    'Delete file',
                                    self)
@@ -80,6 +95,13 @@ class MyWindow(QMainWindow):
 
         self.play_action = QAction(QIcon('img/play.png'), 'Play file', self)
         self.play_action.setStatusTip('Play current file')
+
+        self.concatenate_action = QAction(QIcon('img/concatenate'),
+                                          'Add to concatenate list',
+                                          self)
+        self.concatenate_action.setStatusTip('Add to concatenate list')
+
+        self.concatenate_widget = ConcatenateWidget(self)
 
         self.context_menu = QMenu(self)
 
@@ -93,30 +115,55 @@ class MyWindow(QMainWindow):
         self.stop_button = QPushButton(QIcon('img/stop.png'), 'Stop', self)
         self.stop_button.setEnabled(False)
 
-        self.time_slider = QSlider(Qt.Horizontal)
-        self.volume_slider = QSlider(Qt.Horizontal)
+        self.time_slider = QSlider(Qt.Horizontal, self)
+        self.time_slider.setStyleSheet("""
+                    QSlider::groove:horizontal {  
+                        height: 10px;
+                        margin: 0px;
+                        border-radius: 5px;
+                        background: #B0AEB1;
+                    }
+                    QSlider::handle:horizontal {
+                        background: #fff;
+                        border: 1px solid #E3DEE2;
+                        width: 17px;
+                        margin: -5px 0; 
+                        border-radius: 8px;
+                    }
+                    QSlider::sub-page:qlineargradient {
+                        background: #FAA9A7;
+                        border-radius: 5px;
+                    }
+                """)
+        self.volume_slider = QSlider(Qt.Horizontal, self)
+
         self.time_slider.setEnabled(False)
         self.volume_slider.setEnabled(False)
+
         self.time_slider.setMinimum(0)
-        self.time_slider.setMinimum(0)
+        self.volume_slider.setMinimum(0)
 
         self.q_player = QtMultimedia.QMediaPlayer()
-        self.q_player.setNotifyInterval(2000)
+        self.q_player.setNotifyInterval(100)
 
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         if obj is self.list_widget and event.type() == QEvent.ContextMenu:
             if obj.itemAt(event.pos()) is not None:
                 self.context_menu.exec_(event.globalPos())
                 return True
+
         return super().eventFilter(obj, event)
 
     def show_dialog(self):
-        files_choose_string = 'All music files(*.mp3;*.wav);;' \
+        files_choose_string = 'All music files(*.mp3 *.wav);;' \
                               'MP3 files(*.mp3);;WAV files(*.wav)'
-        file_names, _ = QFileDialog.getOpenFileNames(self,
-                                                     'Add files',
-                                                     '/home',
-                                                     files_choose_string)
+        file_names = QFileDialog.getOpenFileNames(self,
+                                                  caption='Add files',
+                                                  filter=files_choose_string)
+        file_names = file_names[0]
+        self.add_files(file_names)
+
+    def add_files(self, file_names):
         if file_names:
             for file_name in file_names:
                 self.player.add_file(file_name)
@@ -203,36 +250,32 @@ class MyWindow(QMainWindow):
     def load_track(self):
         file_to_play = self.player.get_file_in_index(
             self.list_widget.currentRow())
-        b = QUrl.fromLocalFile(file_to_play)
-        a = QtMultimedia.QMediaContent(b)
-        self.q_player.setMedia(a)
+        url = QUrl.fromLocalFile(file_to_play)
+        media = QtMultimedia.QMediaContent(url)
+        self.q_player.setMedia(media)
 
+    def on_cut_file(self):
+        file_to_cut_path = self.player.get_file_in_index(
+            self.list_widget.currentRow())
+        cut_dialog = CutDialog(self)
+        cut_dialog.set_media(file_to_cut_path)
+        cut_dialog.setWindowModality(Qt.WindowModal)
+        cut_dialog.fileCut.connect(lambda x: self.add_files([x]))
+        cut_dialog.show()
+        cut_dialog.exec_()
 
-class PlayerInside:
-    def __init__(self):
-        self._music_files_list = []
-        self._music_files_set = set()
+    def on_concatenate(self):
+        file_to_add = self.player.get_file_in_index(
+            self.list_widget.currentRow())
+        self.concatenate_widget.add_path(file_to_add)
 
-    def add_file(self, file_dir):
-        if file_dir not in self._music_files_set:
-            self._music_files_list.append(file_dir)
-            self._music_files_set.add(file_dir)
-
-    def remove_file(self, position):
-        file_dir = self._music_files_list[position]
-        self._music_files_list.pop(position)
-        self._music_files_set.remove(file_dir)
-
-    def get_file_names(self):
-        return map(lambda x: os.path.split(x)[1], self._music_files_list)
-
-    def get_file_in_index(self, index):
-        return self._music_files_list[index]
+    def concatenate(self, path):
+        self.add_files([path])
 
 
 def main():
     app = QApplication(sys.argv)
-    ex = MyWindow()
+    ex = AudioEditor()
     sys.exit(app.exec_())
 
 
