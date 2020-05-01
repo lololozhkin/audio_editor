@@ -19,7 +19,6 @@ QPushButton
     stop: 0.5 #4e4e4e,
     stop: 0.9 #4a4a4a,
     stop: 1 #464646);
-    
     border-width: 1px;
     border-color: #1e1e1e;
     border-style: solid;

@@ -7,6 +7,7 @@ from PlayerInside import PlayerInside
 from SoundContainer import SoundContainer
 import sys
 
+
 class ConcatenateWidget(QWidget):
     concatenate_finished = QtCore.pyqtSignal(str)
 
