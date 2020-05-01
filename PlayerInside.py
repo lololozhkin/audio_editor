@@ -1,5 +1,8 @@
 import os
+import sys
+
 from pydub import AudioSegment
+
 
 class PlayerInside:
     def __init__(self):
@@ -47,9 +50,25 @@ class PlayerInside:
         save_path = os.path.abspath(save_path)
         ext = ext[1:]
         for file_path in iterible_urls:
-            file_path = os.path.abspath(file_path[1:])
+            file_path = PlayerInside.get_normal_path(file_path)
+            file_path = os.path.abspath(file_path)
             file_format = os.path.splitext(file_path)[1][1:]
             cur_segment = AudioSegment.from_file(file_path, file_format)
             concatenated = concatenated + cur_segment
         concatenated.export(f'{save_path}.{ext}', format=ext)
+
+    @staticmethod
+    def get_normal_path(path):
+        if sys.platform.find('linux') != -1:
+            return path
+        else:
+            return path[1:]
+
+
+def main():
+    print(sys.platform)
+
+
+if __name__ == '__main__':
+    main()
 

@@ -59,10 +59,10 @@ class TwoPointersSlider(QWidget):
         self.maximum = 100
 
         self.mainPosChanged.connect(lambda x: self.update())
-        self.mainPosChanged.connect(lambda x: self.end_of_range_check())
+        # self.mainPosChanged.connect(lambda x: self.end_of_range_check())
 
         self.rightPosChanged.connect(lambda x: self.update())
-        self.rightPosChanged.connect(lambda x: self.end_of_range_check())
+        # self.rightPosChanged.connect(lambda x: self.end_of_range_check())
 
         self.leftPosChanged.connect(lambda x: self.update())
 
@@ -184,11 +184,12 @@ class TwoPointersSlider(QWidget):
         old_pos = self.main_pointer_pos
         self.main_pointer_pos = max(self.first_pointer_pos,
                                     new_pos)
+        if self.main_pointer_pos > self.second_pointer_pos:
+            self.main_pointer_pos = self.second_pointer_pos
+            self.endOfRange.emit()
 
-        self.main_pointer_pos = min(self.main_pointer_pos,
-                                    self.second_pointer_pos)
-
-        self.mainPosChanged.emit(self.main_pointer_pos)
+        if old_pos != self.main_pointer_pos:
+            self.mainPosChanged.emit(self.main_pointer_pos)
 
     def set_left_pos(self, new_pos):
         old_pos = self.first_pointer_pos
@@ -209,6 +210,7 @@ class TwoPointersSlider(QWidget):
         if self.main_pointer_pos > self.second_pointer_pos:
             self.set_main_pos(self.second_pointer_pos)
             self.mainSliderMoved.emit(self.main_pointer_pos)
+            self.endOfRange.emit()
 
         if old_pos != self.second_pointer_pos:
             self.rightPosChanged.emit(self.second_pointer_pos)
@@ -254,8 +256,7 @@ class TwoPointersSlider(QWidget):
         self.first_taken = self.second_taken = self.main_taken = False
 
     def end_of_range_check(self):
-        if self.main_pointer_pos >= self.second_pointer_pos:
-            self.endOfRange.emit()
+        return self.main_pointer_pos >= self.second_pointer_pos
 
     def from_max_to_x(self, check_pos):
         breadth = self.width() - self.left_padding - self.right_padding

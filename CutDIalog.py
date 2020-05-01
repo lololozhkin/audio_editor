@@ -63,7 +63,7 @@ class CutDialog(QDialog):
     def on_cut_button_clicked(self):
         path = QFileDialog.getSaveFileName(parent=self,
                                            caption="Save file",
-                                           filter="WAV (*.wav);;MP3 (*.mp3)")
+                                           filter="wav (*.wav);;mp3 (*.mp3)")
         if path[0] and path[1]:
             self.setCursor(QCursor(Qt.WaitCursor))
             self.play_pause_button.setEnabled(False)
@@ -72,13 +72,13 @@ class CutDialog(QDialog):
             self.player_inside.cut_file(self.media_path,
                                         self.cut_slider.first_pointer_pos,
                                         self.cut_slider.second_pointer_pos,
-                                        path[0])
+                                        CutDialog.get_path_for_os(path))
 
             self.play_pause_button.setEnabled(True)
             self.cut_button.setEnabled(True)
             self.unsetCursor()
 
-            self.fileCut.emit(path[0])
+            self.fileCut.emit(CutDialog.get_path_for_os(path))
 
     def set_media(self, path):
         url = QUrl.fromLocalFile(path)
@@ -101,11 +101,12 @@ class CutDialog(QDialog):
         state = self.player.state()
         if state == QtMultimedia.QMediaPlayer.PlayingState:
             self.player.pause()
-        else:
+        elif not self.cut_slider.end_of_range_check():
             self.player.play()
 
     def on_end_of_range(self):
-        self.player.pause()
+        if not self.player.state() == QtMultimedia.QMediaPlayer.PausedState:
+            self.player.pause()
 
     def init_player(self, state):
         if state == QtMultimedia.QMediaPlayer.LoadedMedia:
@@ -128,6 +129,13 @@ class CutDialog(QDialog):
     def on_mainSliderMoved(self, position):
         # self.player.pause()
         self.player.setPosition(position)
+
+    @staticmethod
+    def get_path_for_os(path):
+        if sys.platform.find('linux') != -1:
+            return f'{path[0]}.{path[1][:3]}'
+        else:
+            return path[0]
 
 
 def main():

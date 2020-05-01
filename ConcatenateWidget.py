@@ -5,7 +5,7 @@ from PyQt5.QtGui import QCursor
 from PyQt5.QtCore import Qt, QSize
 from PlayerInside import PlayerInside
 from SoundContainer import SoundContainer
-
+import sys
 
 class ConcatenateWidget(QWidget):
     concatenate_finished = QtCore.pyqtSignal(str)
@@ -47,9 +47,9 @@ class ConcatenateWidget(QWidget):
     def on_concatenate_clicked(self):
         path = QFileDialog.getSaveFileName(parent=self,
                                            caption="Save file",
-                                           filter="WAV (*.wav);;MP3 (*.mp3)")
+                                           filter="wav (*.wav);;mp3 (*.mp3)")
         if path[0] and path[1]:
-            path = path[0]
+            path = ConcatenateWidget.get_path_for_os(path)
 
             self.setCursor(QCursor(Qt.WaitCursor))
             self.concatenate_btn.setDisabled(True)
@@ -62,3 +62,10 @@ class ConcatenateWidget(QWidget):
 
             self.container.clear()
             self.concatenate_finished.emit(path)
+
+    @staticmethod
+    def get_path_for_os(path):
+        if sys.platform.find('linux') != -1:
+            return f'{path[0]}.{path[1][:3]}'
+        else:
+            return path[0]
