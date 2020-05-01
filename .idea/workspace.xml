@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="99f9133c-62f8-43da-bd91-29a987a8dbb1" name="Default Changelist" comment="" />
+    <list default="true" id="99f9133c-62f8-43da-bd91-29a987a8dbb1" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SoundContainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/SoundContainer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/download_samples.py" beforeDir="false" afterPath="$PROJECT_DIR$/download_samples.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,7 +54,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.Editor">
+  <component name="RunManager" selected="Python.download_samples">
     <configuration name="ConcatenateWidget" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="audio_editor" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -185,11 +189,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.download_samples" />
         <item itemvalue="Python.Editor" />
         <item itemvalue="Python.ConcatenateWidget" />
         <item itemvalue="Python.PlayerInside" />
         <item itemvalue="Python.TwoPointersSlider" />
-        <item itemvalue="Python.download_samples" />
       </list>
     </recent_temporary>
   </component>
@@ -240,6 +244,7 @@
       <workItem from="1588310503019" duration="22000" />
       <workItem from="1588329748833" duration="8750000" />
       <workItem from="1588330808319" duration="1300000" />
+      <workItem from="1588332357363" duration="270000" />
     </task>
     <servers />
   </component>
@@ -306,7 +311,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/PlayerInside.py</url>
-          <line>34</line>
+          <line>37</line>
           <option name="timeStamp" value="45" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -327,7 +332,7 @@
     <SUITE FILE_PATH="coverage/audio_editor$SongButton.coverage" NAME="SongButton Coverage Results" MODIFIED="1588103764799" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/audio_editor$CutWidget.coverage" NAME="CutWidget Coverage Results" MODIFIED="1587145930265" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/audio_editor$contest.coverage" NAME="contest Coverage Results" MODIFIED="1587221439748" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/audio_editor$download_samples.coverage" NAME="download_samples Coverage Results" MODIFIED="1588265752802" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/audio_editor$download_samples.coverage" NAME="download_samples Coverage Results" MODIFIED="1588350812165" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/audio_editor$site_attac.coverage" NAME="site_attac Coverage Results" MODIFIED="1587221409350" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tmp" />
     <SUITE FILE_PATH="coverage/audio_editor$CutDIalog.coverage" NAME="CutDIalog Coverage Results" MODIFIED="1588256772486" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/audio_editor$abacaba.coverage" NAME="abacaba Coverage Results" MODIFIED="1587706373762" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -337,7 +342,7 @@
     <SUITE FILE_PATH="coverage/audio_editor$TwoPointersSlider.coverage" NAME="TwoPointersSlider Coverage Results" MODIFIED="1587646120043" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/audio_editor$CutDIalig.coverage" NAME="CutDIalig Coverage Results" MODIFIED="1587208435429" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/audio_editor$one_more_test.coverage" NAME="one_more_test Coverage Results" MODIFIED="1587810467516" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/audio_editor$Editor.coverage" NAME="Editor Coverage Results" MODIFIED="1588331755231" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/audio_editor$Editor.coverage" NAME="Editor Coverage Results" MODIFIED="1588350679694" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/audio_editor_master$TwoPointersSlider.coverage" NAME="TwoPointersSlider Coverage Results" MODIFIED="1588331379384" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/audio_editor$test.coverage" NAME="test Coverage Results" MODIFIED="1587808777453" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/audio_editor_master$ConcatenateWidget.coverage" NAME="ConcatenateWidget Coverage Results" MODIFIED="1588333876505" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

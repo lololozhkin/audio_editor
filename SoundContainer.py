@@ -62,7 +62,7 @@ class SongButton(QPushButton):
         self.index = index
 
     def mouseMoveEvent(self, e: QtGui.QMouseEvent):
-        if e.buttons() != Qt.LeftButton:
+        if e.buttons() != QtCore.Qt.LeftButton:
             return
         mime_data = QMimeData()
         mime_data.setText(self.path)
@@ -73,7 +73,7 @@ class SongButton(QPushButton):
         if isinstance(self.parent, SoundContainer):
             self.parent.remove_sound(self.index)
             self.close()
-        drop_action = drag.exec(Qt.MoveAction)
+        drop_action = drag.exec(QtCore.Qt.MoveAction)
 
         super().mouseMoveEvent(e)
 

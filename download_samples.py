@@ -23,7 +23,7 @@ def main():
         pass
 
     FILES = {
-        'https://yadi.sk/d/wMu8iINSR2m3pA': get_path('result.mp3'),
+        'https://yadi.sk/d/wMu8iINSR2m3pA': get_path('result.wav'),
         'https://yadi.sk/d/VhTIu8gUJUGHmQ': get_path('full_speach.mp3'),
         'https://yadi.sk/d/hGmP6J5uQE0EQg': in_pieces('luschshe.wav'),
         'https://yadi.sk/d/eqqpNhkq_ToFmg': in_pieces('on.wav'),
