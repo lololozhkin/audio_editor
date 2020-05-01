@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="99f9133c-62f8-43da-bd91-29a987a8dbb1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/PlayerInside.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/TwoPointersSlider.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/Player.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testy.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Player.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -236,6 +232,7 @@
       <workItem from="1588052194750" duration="313000" />
       <workItem from="1588090902433" duration="11351000" />
       <workItem from="1588248088671" duration="14496000" />
+      <workItem from="1588310503019" duration="22000" />
     </task>
     <servers />
   </component>

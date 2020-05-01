@@ -10,7 +10,7 @@ from CutDIalog import CutDialog
 from ConcatenateWidget import ConcatenateWidget
 
 
-class AudioEditor(QMainWindow):
+class Editor(QMainWindow):
     def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
         self.statusBar()
@@ -275,7 +275,7 @@ class AudioEditor(QMainWindow):
 
 def main():
     app = QApplication(sys.argv)
-    ex = AudioEditor()
+    ex = Editor()
     sys.exit(app.exec_())
 
 
