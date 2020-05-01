@@ -117,7 +117,7 @@ class Editor(QMainWindow):
 
         self.time_slider = QSlider(Qt.Horizontal, self)
         self.time_slider.setStyleSheet("""
-                    QSlider::groove:horizontal {  
+                    QSlider::groove:horizontal {
                         height: 10px;
                         margin: 0px;
                         border-radius: 5px;
@@ -127,7 +127,7 @@ class Editor(QMainWindow):
                         background: #fff;
                         border: 1px solid #E3DEE2;
                         width: 17px;
-                        margin: -5px 0; 
+                        margin: -5px 0;
                         border-radius: 8px;
                     }
                     QSlider::sub-page:qlineargradient {

@@ -140,8 +140,6 @@ class CutDialog(QDialog):
 def main():
     app = QApplication(sys.argv)
     ex = CutDialog()
-    ex.set_media(
-        r"D:\PythonTask\nokiaarabicringtonenokiaarabicringtone_(st-tancpol.ru).mp3")
     ex.show()
     sys.exit(app.exec_())
 

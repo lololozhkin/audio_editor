@@ -4,8 +4,8 @@
     <list default="true" id="99f9133c-62f8-43da-bd91-29a987a8dbb1" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CutDIalog.py" beforeDir="false" afterPath="$PROJECT_DIR$/CutDIalog.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Editor.pyw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TwoPointersSlider.py" beforeDir="false" afterPath="$PROJECT_DIR$/TwoPointersSlider.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Editor.py" beforeDir="false" afterPath="$PROJECT_DIR$/Editor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SoundContainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/SoundContainer.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -246,7 +246,7 @@
       <workItem from="1588329748833" duration="8750000" />
       <workItem from="1588330808319" duration="1300000" />
       <workItem from="1588332357363" duration="568000" />
-      <workItem from="1588351321947" duration="302000" />
+      <workItem from="1588351321947" duration="1289000" />
     </task>
     <servers />
   </component>
