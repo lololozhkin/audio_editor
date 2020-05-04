@@ -3,9 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="99f9133c-62f8-43da-bd91-29a987a8dbb1" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ConcatenateWidget.py" beforeDir="false" afterPath="$PROJECT_DIR$/ConcatenateWidget.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CutDIalog.py" beforeDir="false" afterPath="$PROJECT_DIR$/CutDIalog.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PlayerInside.py" beforeDir="false" afterPath="$PROJECT_DIR$/PlayerInside.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SoundContainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/SoundContainer.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -248,6 +247,8 @@
       <workItem from="1588332357363" duration="568000" />
       <workItem from="1588351321947" duration="1511000" />
       <workItem from="1588355479430" duration="92000" />
+      <workItem from="1588360730869" duration="64000" />
+      <workItem from="1588582492703" duration="4102000" />
     </task>
     <servers />
   </component>
@@ -314,7 +315,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/PlayerInside.py</url>
-          <line>37</line>
+          <line>38</line>
           <option name="timeStamp" value="45" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">

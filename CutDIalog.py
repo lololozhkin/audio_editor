@@ -1,5 +1,5 @@
 import sys
-from PyQt5 import QtMultimedia, QtCore, QtGui
+from PyQt5 import QtMultimedia, QtCore
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, \
     QApplication, QDialog, QFileDialog
 from PyQt5.QtGui import QIcon, QCursor
@@ -69,10 +69,10 @@ class CutDialog(QDialog):
             self.play_pause_button.setEnabled(False)
             self.cut_button.setEnabled(False)
 
-            self.player_inside.cut_file(self.media_path,
-                                        self.cut_slider.first_pointer_pos,
-                                        self.cut_slider.second_pointer_pos,
-                                        CutDialog.get_path_for_os(path))
+            PlayerInside.cut_file(self.media_path,
+                                  self.cut_slider.first_pointer_pos,
+                                  self.cut_slider.second_pointer_pos,
+                                  CutDialog.get_path_for_os(path))
 
             self.play_pause_button.setEnabled(True)
             self.cut_button.setEnabled(True)

@@ -31,7 +31,8 @@ class PlayerInside:
     def get_file_in_index(self, index):
         return self._music_files_list[index]
 
-    def cut_file(self, file_path, start, end, path_to_save):
+    @staticmethod
+    def cut_file(file_path, start, end, path_to_save):
         start, end = map(int, (start, end))
         formating = os.path.splitext(file_path)[1][1:]
         segment = AudioSegment.from_file(file_path,
