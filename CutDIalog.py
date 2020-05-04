@@ -1,15 +1,18 @@
 import sys
 from PyQt5 import QtMultimedia, QtCore
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, \
-    QApplication, QDialog, QFileDialog
+    QApplication, QDialog, QFileDialog, QInputDialog
 from PyQt5.QtGui import QIcon, QCursor
 from PyQt5.QtCore import Qt, QUrl, QRect, QSize
+
+from Fragment import Fragment
 from TwoPointersSlider import TwoPointersSlider
 from PlayerInside import PlayerInside
+from FragmentPlayer import FragmentPlayer
 
 
 class CutDialog(QDialog):
-    fileCut = QtCore.pyqtSignal(str)
+    fileCut = QtCore.pyqtSignal(Fragment)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -17,6 +20,7 @@ class CutDialog(QDialog):
         self.media_path = None
         self.player_inside = PlayerInside()
         self.cut_file_path = None
+        self._fragment = None
 
         self.vbox.addWidget(self.cut_slider)
         self.vbox.addWidget(self.play_pause_button)
@@ -27,7 +31,8 @@ class CutDialog(QDialog):
         self.setLayout(self.vbox)
 
         self.cut_slider.mainSliderMoved.connect(self.on_mainSliderMoved)
-        self.player.positionChanged.connect(self.cut_slider.set_main_pos)
+        self.player.overriddenPositionChanged.connect(
+            self.cut_slider.set_main_pos)
 
         self.cut_slider.endOfRange.connect(self.on_end_of_range)
 
@@ -35,7 +40,6 @@ class CutDialog(QDialog):
         self.cut_button.clicked.connect(self.on_cut_button_clicked)
 
         self.player.stateChanged.connect(self.on_state_changed)
-        self.player.durationChanged.connect(self.cut_slider.set_maximum)
         self.player.mediaStatusChanged.connect(self.init_player)
 
     def init_ui(self):
@@ -49,7 +53,7 @@ class CutDialog(QDialog):
         self.vbox = QVBoxLayout()
         self.hbox = QHBoxLayout()
 
-        self.player = QtMultimedia.QMediaPlayer()
+        self.player = FragmentPlayer()
         self.player.setNotifyInterval(5)
 
         self.setGeometry(QRect(300, 300, 500, 150))
@@ -61,30 +65,38 @@ class CutDialog(QDialog):
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
     def on_cut_button_clicked(self):
-        path = QFileDialog.getSaveFileName(parent=self,
-                                           caption="Save file",
-                                           filter="wav (*.wav);;mp3 (*.mp3)")
-        if path[0] and path[1]:
+        ok, text = self.show_dialog()
+        if ok:
             self.setCursor(QCursor(Qt.WaitCursor))
             self.play_pause_button.setEnabled(False)
             self.cut_button.setEnabled(False)
 
-            PlayerInside.cut_file(self.media_path,
-                                  self.cut_slider.first_pointer_pos,
-                                  self.cut_slider.second_pointer_pos,
-                                  CutDialog.get_path_for_os(path))
+            fragment = Fragment(self.cut_slider.first_pointer_pos,
+                                       self.cut_slider.second_pointer_pos,
+                                       self._fragment)
+            fragment.set_name(text)
+            self.fileCut.emit(fragment)
 
             self.play_pause_button.setEnabled(True)
             self.cut_button.setEnabled(True)
             self.unsetCursor()
 
-            self.fileCut.emit(CutDialog.get_path_for_os(path))
+    def show_dialog(self):
+        text, ok = QInputDialog.getText(self,
+                                        'Enter fragment name',
+                                        self._fragment.name)
+
+        return ok, text
 
     def set_media(self, path):
         url = QUrl.fromLocalFile(path)
         media = QtMultimedia.QMediaContent(url)
         self.player.setMedia(media)
         self.media_path = path
+
+    def set_fragment(self, fragment):
+        self._fragment = fragment
+        self.player.set_fragment(fragment)
 
     def on_state_changed(self, state):
         if state == QtMultimedia.QMediaPlayer.PausedState:
@@ -127,7 +139,7 @@ class CutDialog(QDialog):
 
     def on_mainSliderMoved(self, position):
         # self.player.pause()
-        self.player.setPosition(position)
+        self.player.set_fragment_position(position)
 
     @staticmethod
     def get_path_for_os(path):

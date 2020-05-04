@@ -2,12 +2,14 @@ import sys
 from PyQt5 import QtMultimedia
 from PyQt5.QtWidgets import QListWidget, QAction, QMenu, \
     QFileDialog, QVBoxLayout, QHBoxLayout, QPushButton, QWidget, QSlider, \
-    QMainWindow, QApplication
+    QMainWindow, QApplication, QListWidgetItem
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QEvent, QObject, QUrl
 from PlayerInside import PlayerInside
 from CutDIalog import CutDialog
 from ConcatenateWidget import ConcatenateWidget
+from FragmentPlayer import FragmentPlayer
+from Fragment import Fragment
 
 
 class Editor(QMainWindow):
@@ -49,10 +51,13 @@ class Editor(QMainWindow):
         self.play_pause_button.clicked.connect(self.play_pause_on_clicked)
         self.stop_button.clicked.connect(self.q_player.stop)
 
-        self.time_slider.sliderMoved.connect(self.q_player.setPosition)
+        self.time_slider.sliderMoved.connect(
+            self.q_player.set_fragment_position)
+
         self.volume_slider.valueChanged.connect(self.q_player.setVolume)
 
-        self.q_player.positionChanged.connect(self.time_slider.setValue)
+        self.q_player.overriddenPositionChanged.connect(
+            self.time_slider.setValue)
         self.q_player.volumeChanged.connect(self.volume_slider.setValue)
 
         self.q_player.setVolume(50)
@@ -143,7 +148,7 @@ class Editor(QMainWindow):
         self.time_slider.setMinimum(0)
         self.volume_slider.setMinimum(0)
 
-        self.q_player = QtMultimedia.QMediaPlayer()
+        self.q_player = FragmentPlayer()
         self.q_player.setNotifyInterval(100)
 
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
@@ -166,18 +171,26 @@ class Editor(QMainWindow):
     def add_files(self, file_names):
         if file_names:
             for file_name in file_names:
-                self.player.add_file(file_name)
-            self.list_widget.clear()
-            for file_name in self.player.get_file_names():
-                self.list_widget.addItem(file_name)
+                self.player.add_file_path(file_name)
+            self.list_update()
+
+    def add_fragment(self, fragment):
+        self.player.add_fragment(fragment)
+        self.list_update()
 
     def delete_files(self, indexes):
         if len(indexes) > 0:
             for index in indexes:
                 self.player.remove_file(index.row())
-            self.list_widget.clear()
-            for file_name in self.player.get_file_names():
-                self.list_widget.addItem(file_name)
+            self.list_update()
+
+    def list_update(self):
+        self.list_widget.clear()
+        for fragment in self.player.get_fragments():
+            list_item = QListWidgetItem(self.list_widget)
+            list_item.setText(fragment.name)
+            list_item.setData(Qt.UserRole, fragment)
+            self.list_widget.addItem(list_item)
 
     def init_player(self, state):
         if state == QtMultimedia.QMediaPlayer.LoadedMedia:
@@ -248,24 +261,22 @@ class Editor(QMainWindow):
             self.q_player.play()
 
     def load_track(self):
-        file_to_play = self.player.get_file_in_index(
+        fragment = self.player.get_fragment_in_index(
             self.list_widget.currentRow())
-        url = QUrl.fromLocalFile(file_to_play)
-        media = QtMultimedia.QMediaContent(url)
-        self.q_player.setMedia(media)
+        self.q_player.set_fragment(fragment)
 
     def on_cut_file(self):
-        file_to_cut_path = self.player.get_file_in_index(
+        fragment = self.player.get_fragment_in_index(
             self.list_widget.currentRow())
         cut_dialog = CutDialog(self)
-        cut_dialog.set_media(file_to_cut_path)
+        cut_dialog.set_fragment(fragment)
         cut_dialog.setWindowModality(Qt.WindowModal)
-        cut_dialog.fileCut.connect(lambda x: self.add_files([x]))
+        cut_dialog.fileCut.connect(self.add_fragment)
         cut_dialog.show()
         cut_dialog.exec_()
 
     def on_concatenate(self):
-        file_to_add = self.player.get_file_in_index(
+        file_to_add = self.player.get_fragment_in_index(
             self.list_widget.currentRow())
         self.concatenate_widget.add_path(file_to_add)
 

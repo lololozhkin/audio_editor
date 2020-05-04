@@ -1,35 +1,29 @@
 import os
 import sys
+from Fragment import Fragment
 
 from pydub import AudioSegment
 
 
 class PlayerInside:
     def __init__(self):
-        self._music_files_list = []
-        self._music_files_set = set()
+        self._music_fragments_list = []
 
-        try:
-            os.mkdir('tmp')
-            self.path_to_tmp = os.path.join(os.getcwd(), 'tmp')
-        except FileExistsError as e:
-            self.path_to_tmp = os.path.join(os.getcwd(), 'tmp')
+    def add_file_path(self, file_dir):
+        fragment = Fragment.parent_fragment(file_dir)
+        self._music_fragments_list.append(fragment)
 
-    def add_file(self, file_dir):
-        if file_dir not in self._music_files_set:
-            self._music_files_list.append(file_dir)
-            self._music_files_set.add(file_dir)
+    def add_fragment(self, fragment):
+        self._music_fragments_list.append(fragment)
 
     def remove_file(self, position):
-        file_dir = self._music_files_list[position]
-        self._music_files_list.pop(position)
-        self._music_files_set.remove(file_dir)
+        self._music_fragments_list.pop(position)
 
-    def get_file_names(self):
-        return map(lambda x: os.path.split(x)[1], self._music_files_list)
+    def get_fragments(self):
+        return self._music_fragments_list
 
-    def get_file_in_index(self, index):
-        return self._music_files_list[index]
+    def get_fragment_in_index(self, index):
+        return self._music_fragments_list[index]
 
     @staticmethod
     def cut_file(file_path, start, end, path_to_save):
