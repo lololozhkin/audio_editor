@@ -1,13 +1,13 @@
 import sys
 from PyQt5 import QtMultimedia, QtCore
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, \
-    QApplication, QDialog, QFileDialog, QInputDialog
+    QApplication, QDialog, QInputDialog, QSpinBox
 from PyQt5.QtGui import QIcon, QCursor
 from PyQt5.QtCore import Qt, QUrl, QRect, QSize
 
 from Fragment import Fragment
 from TwoPointersSlider import TwoPointersSlider
-from PlayerInside import PlayerInside
+from EditorInside import EditorInside
 from FragmentPlayer import FragmentPlayer
 
 
@@ -17,16 +17,34 @@ class CutDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.init_ui()
-        self.media_path = None
-        self.player_inside = PlayerInside()
-        self.cut_file_path = None
+        self.player_inside = EditorInside()
+        self.parent_fragment = None
         self._fragment = None
+        self.editing = False
 
+        self.set_pos_btns.addWidget(self.left_to_main)
+        self.set_pos_btns.addWidget(self.right_to_main)
+
+        self.time_codes_box.addWidget(self.left_time_code)
+        self.time_codes_box.addWidget(self.main_time_code)
+        self.time_codes_box.addWidget(self.right_time_code)
+
+        self.vbox.addLayout(self.time_codes_box)
         self.vbox.addWidget(self.cut_slider)
+        self.vbox.addLayout(self.set_pos_btns)
         self.vbox.addWidget(self.play_pause_button)
+        self.vbox.addWidget(self.cut_button)
 
-        self.hbox.addWidget(self.cut_button)
-        self.vbox.addLayout(self.hbox)
+        self.left_to_main.clicked.connect(self.on_left_to_main_clicked)
+        self.right_to_main.clicked.connect(self.on_right_to_main_clicked)
+
+        self.left_time_code.valueChanged.connect(self.on_left_time_changed)
+        self.right_time_code.valueChanged.connect(self.on_right_time_changed)
+        self.main_time_code.valueChanged.connect(self.on_main_time_changed)
+
+        self.cut_slider.leftPosChanged.connect(self.on_left_pos_changed)
+        self.cut_slider.rightPosChanged.connect(self.on_right_pos_changed)
+        self.cut_slider.mainPosChanged.connect(self.on_main_pos_changed)
 
         self.setLayout(self.vbox)
 
@@ -41,6 +59,8 @@ class CutDialog(QDialog):
 
         self.player.stateChanged.connect(self.on_state_changed)
         self.player.mediaStatusChanged.connect(self.init_player)
+        self.player.durationChanged.connect(
+            lambda x: self.cut_slider.set_maximum(self.player.duration()))
 
     def init_ui(self):
         self.cut_slider = TwoPointersSlider(self)
@@ -51,17 +71,28 @@ class CutDialog(QDialog):
                                       'Cut',
                                       self)
         self.vbox = QVBoxLayout()
-        self.hbox = QHBoxLayout()
+        self.set_pos_btns = QHBoxLayout()
+        self.time_codes_box = QHBoxLayout()
 
         self.player = FragmentPlayer()
         self.player.setNotifyInterval(5)
 
-        self.setGeometry(QRect(300, 300, 500, 150))
+        self.right_time_code = QSpinBox(self)
+        self.right_time_code.setSuffix(' ms')
+        self.left_time_code = QSpinBox(self)
+        self.left_time_code.setSuffix(' ms')
+        self.main_time_code = QSpinBox(self)
+        self.main_time_code.setSuffix(' ms')
+
+        self.right_to_main = QPushButton(text='Set end', parent=self)
+        self.left_to_main = QPushButton(text='Set start', parent=self)
+
+        self.setGeometry(QRect(300, 300, 750, 200))
         self.setWindowTitle("Cut file")
         self.setWindowIcon(QIcon('img/cut.png'))
-        self.resize(QSize(500, 150))
-        # self.setWindowFlag(Qt.MSWindowsFixedSizeDialogHint, True)
         self.setWindowFlag(Qt.Window, True)
+        self.setFixedHeight(200)
+        self.setMinimumWidth(750)
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
     def on_cut_button_clicked(self):
@@ -71,11 +102,12 @@ class CutDialog(QDialog):
             self.play_pause_button.setEnabled(False)
             self.cut_button.setEnabled(False)
 
-            fragment = Fragment(self.cut_slider.first_pointer_pos,
-                                       self.cut_slider.second_pointer_pos,
-                                       self._fragment)
-            fragment.set_name(text)
-            self.fileCut.emit(fragment)
+            parent = self._fragment if not self.editing \
+                else self.parent_fragment
+            start = self.cut_slider.first_pointer_pos
+            end = self.cut_slider.second_pointer_pos
+            fragm = EditorInside.cut_fragment(parent, start, end, text)
+            self.fileCut.emit(fragm)
 
             self.play_pause_button.setEnabled(True)
             self.cut_button.setEnabled(True)
@@ -83,20 +115,23 @@ class CutDialog(QDialog):
 
     def show_dialog(self):
         text, ok = QInputDialog.getText(self,
+                                        'Fragment name',
                                         'Enter fragment name',
-                                        self._fragment.name)
+                                        text=self._fragment.name)
 
         return ok, text
-
-    def set_media(self, path):
-        url = QUrl.fromLocalFile(path)
-        media = QtMultimedia.QMediaContent(url)
-        self.player.setMedia(media)
-        self.media_path = path
 
     def set_fragment(self, fragment):
         self._fragment = fragment
         self.player.set_fragment(fragment)
+        # self.cut_slider.set_maximum(self._fragment.duration)
+
+    def set_fragment_for_editing(self, fragment):
+        self._fragment = fragment
+        self.parent_fragment = fragment.parent
+        self.player.set_fragment(self.parent_fragment)
+        self.editing = True
+        self.cut_button.setText('Edit')
 
     def on_state_changed(self, state):
         if state == QtMultimedia.QMediaPlayer.PausedState:
@@ -130,6 +165,18 @@ class CutDialog(QDialog):
 
             self.cut_slider.set_maximum(self.player.duration())
 
+            self.main_time_code.setMaximum(self.player.duration())
+            self.right_time_code.setMaximum(self.player.duration())
+            self.left_time_code.setMaximum(self.player.duration())
+
+            if self.editing:
+                self.cut_slider.set_left_pos(self._fragment.start)
+                self.cut_slider.set_right_pos(self._fragment.end)
+
+            self.main_time_code.setValue(self.cut_slider.main_pointer_pos)
+            self.right_time_code.setValue(self.cut_slider.second_pointer_pos)
+            self.left_time_code.setValue(self.cut_slider.first_pointer_pos)
+
         elif (state == QtMultimedia.QMediaPlayer.InvalidMedia or
               state == QtMultimedia.QMediaPlayer.NoMedia):
 
@@ -137,16 +184,45 @@ class CutDialog(QDialog):
             self.play_pause_button.setText('Play')
             self.play_pause_button.setEnabled(False)
 
+    def closeEvent(self, e):
+        self.player.stop()
+        e.accept()
+
     def on_mainSliderMoved(self, position):
         # self.player.pause()
         self.player.set_fragment_position(position)
 
-    @staticmethod
-    def get_path_for_os(path):
-        if sys.platform.find('linux') != -1:
-            return f'{path[0]}.{path[1][:3]}'
-        else:
-            return path[0]
+    def on_main_pos_changed(self, pos):
+        self.main_time_code.setValue(pos)
+
+    def on_left_to_main_clicked(self):
+        self.cut_slider.set_left_pos(self.cut_slider.main_pointer_pos)
+
+    def on_right_to_main_clicked(self):
+        self.cut_slider.set_right_pos(self.cut_slider.main_pointer_pos)
+
+    def on_left_time_changed(self, pos):
+        self.cut_slider.set_left_pos(pos)
+        self.main_time_code.setMinimum(pos)
+
+    def on_right_time_changed(self, pos):
+        self.cut_slider.set_right_pos(pos)
+        self.main_time_code.setMaximum(pos)
+
+    def on_left_pos_changed(self, pos):
+        self.left_time_code.setValue(pos)
+        self.right_time_code.setMinimum(pos)
+        self.main_time_code.setMinimum(pos)
+
+    def on_right_pos_changed(self, pos):
+        self.right_time_code.setValue(pos)
+        self.left_time_code.setMaximum(pos)
+        self.main_time_code.setMaximum(pos)
+
+    def on_main_time_changed(self, pos):
+        self.cut_slider.set_main_pos(pos)
+        if self.player.state() == QtMultimedia.QMediaPlayer.PausedState:
+            self.player.set_fragment_position(pos)
 
 
 def main():

@@ -1,15 +1,17 @@
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import QFileDialog, QVBoxLayout, QPushButton,\
-    QWidget, QScrollArea
+from PyQt5.QtWidgets import QVBoxLayout, QPushButton, \
+    QWidget, QScrollArea, QInputDialog
 from PyQt5.QtGui import QCursor
 from PyQt5.QtCore import Qt, QSize
-from PlayerInside import PlayerInside
+from EditorInside import EditorInside
 from SoundContainer import SoundContainer
+from Fragment import Fragment
+import os
 import sys
 
 
 class ConcatenateWidget(QWidget):
-    concatenate_finished = QtCore.pyqtSignal(str)
+    concatenate_finished = QtCore.pyqtSignal(Fragment)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -20,7 +22,7 @@ class ConcatenateWidget(QWidget):
         self.concatenate_btn.clicked.connect(self.on_concatenate_clicked)
         self.concatenate_btn.setEnabled(False)
 
-        self.container.fileAdded.connect(self.on_file_added)
+        self.container.fragmentAdded.connect(self.on_fragment_added)
 
         self.vbox.addWidget(self.scroll_area)
         self.vbox.addWidget(self.concatenate_btn, alignment=Qt.AlignRight)
@@ -36,37 +38,30 @@ class ConcatenateWidget(QWidget):
         self.concatenate_btn = QPushButton(self, text='Concatenate')
         self.concatenate_btn.resize(self.concatenate_btn.size().width(), 100)
 
-    def add_path(self, path):
-        self.container.add_sound(path)
+    def add_fragment(self, fragment):
+        self.container.add_fragment(fragment)
 
-    def on_file_added(self, files_amount):
+    def on_fragment_added(self, files_amount):
         if files_amount >= 1:
             self.concatenate_btn.setEnabled(True)
         else:
             self.concatenate_btn.setEnabled(False)
 
     def on_concatenate_clicked(self):
-        path = QFileDialog.getSaveFileName(parent=self,
-                                           caption="Save file",
-                                           filter="wav (*.wav);;mp3 (*.mp3)")
-        if path[0] and path[1]:
-            path = ConcatenateWidget.get_path_for_os(path)
+        name, ok = QInputDialog.getText(self,
+                                        'Fragment name',
+                                        'Enter fragment name',
+                                        text='fragment.wav')
 
+        if ok:
             self.setCursor(QCursor(Qt.WaitCursor))
             self.concatenate_btn.setDisabled(True)
 
-            PlayerInside.concatenate(map(lambda sound: sound.path,
-                                         self.container.sounds),
-                                     path)
+            fragments = map(lambda snd: snd.fragment, self.container.sounds)
+            fragment = EditorInside.concatenate(list(fragments), name)
+
             self.concatenate_btn.setEnabled(True)
             self.unsetCursor()
 
             self.container.clear()
-            self.concatenate_finished.emit(path)
-
-    @staticmethod
-    def get_path_for_os(path):
-        if sys.platform.find('linux') != -1:
-            return f'{path[0]}.{path[1][:3]}'
-        else:
-            return path[0]
+            self.concatenate_finished.emit(fragment)

@@ -188,8 +188,8 @@ class TwoPointersSlider(QWidget):
             self.main_pointer_pos = self.second_pointer_pos
             self.endOfRange.emit()
 
-        if old_pos != self.main_pointer_pos:
-            self.mainPosChanged.emit(self.main_pointer_pos)
+        # if old_pos != self.main_pointer_pos:
+        self.mainPosChanged.emit(self.main_pointer_pos)
 
     def set_left_pos(self, new_pos):
         old_pos = self.first_pointer_pos

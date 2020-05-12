@@ -9,9 +9,14 @@ class Fragment:
         self._end = end
 
         self._source_path = parent.source_path if parent is not None else None
+
         self._parent_absolute_start = parent.absolute_start \
             if parent is not None else 0
+        self._parent_absolute_end = parent.absolute_end \
+            if parent is not None else 0
         self._name = None
+
+        self._is_parent = False
 
     def __str__(self):
         return f'({self.source_path}, {self.start}, {self.end})'
@@ -28,6 +33,9 @@ class Fragment:
         return self.name.__hash__() \
                ^ (self.absolute_start * 397) \
                ^ (self.duration * 179)
+
+    def is_parent(self):
+        return self._is_parent
 
     @property
     def name(self):
@@ -58,6 +66,18 @@ class Fragment:
     def end(self):
         return self._end
 
+    @property
+    def has_parent(self):
+        return self._parent is not None
+
+    @property
+    def parent(self):
+        fragment = Fragment(self._parent_absolute_start,
+                            self._parent_absolute_end)
+        fragment.set_source(self.source_path)
+        fragment._is_parent = True
+        return fragment
+
     def set_start(self, start):
         self._start = start
 
@@ -77,5 +97,6 @@ class Fragment:
 
         fragment = Fragment(0, duration, None)
         fragment.set_source(source)
+        fragment._is_parent = True
         return fragment
 

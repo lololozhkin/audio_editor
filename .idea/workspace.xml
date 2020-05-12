@@ -2,12 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="99f9133c-62f8-43da-bd91-29a987a8dbb1" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/EditorInside.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConcatenateWidget.py" beforeDir="false" afterPath="$PROJECT_DIR$/ConcatenateWidget.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CutDIalog.py" beforeDir="false" afterPath="$PROJECT_DIR$/CutDIalog.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Editor.py" beforeDir="false" afterPath="$PROJECT_DIR$/Editor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Editor.pyw" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Fragment.py" beforeDir="false" afterPath="$PROJECT_DIR$/Fragment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PlayerInside.py" beforeDir="false" afterPath="$PROJECT_DIR$/PlayerInside.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PlayerInside.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SoundContainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/SoundContainer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TwoPointersSlider.py" beforeDir="false" afterPath="$PROJECT_DIR$/TwoPointersSlider.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -58,7 +62,7 @@
     </option>
   </component>
   <component name="RunManager" selected="Python.Editor">
-    <configuration name="ConcatenateWidget" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="CutDIalog" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="audio_editor" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -71,7 +75,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ConcatenateWidget.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/CutDIalog.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -124,7 +128,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="download_samples" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="TwoPointersSlider" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="audio_editor" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -137,7 +141,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/download_samples.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/TwoPointersSlider.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -195,8 +199,8 @@
         <item itemvalue="Python.Editor" />
         <item itemvalue="Python.Fragment" />
         <item itemvalue="Python.test" />
-        <item itemvalue="Python.download_samples" />
-        <item itemvalue="Python.ConcatenateWidget" />
+        <item itemvalue="Python.TwoPointersSlider" />
+        <item itemvalue="Python.CutDIalog" />
       </list>
     </recent_temporary>
   </component>
@@ -252,6 +256,16 @@
       <workItem from="1588355479430" duration="92000" />
       <workItem from="1588360730869" duration="64000" />
       <workItem from="1588582492703" duration="22273000" />
+      <workItem from="1588659105386" duration="12895000" />
+      <workItem from="1588772057991" duration="42000" />
+      <workItem from="1588960077384" duration="6407000" />
+      <workItem from="1589008016895" duration="12863000" />
+      <workItem from="1589034155948" duration="2313000" />
+      <workItem from="1589039369741" duration="3072000" />
+      <workItem from="1589100592640" duration="4806000" />
+      <workItem from="1589131029129" duration="3678000" />
+      <workItem from="1589187010928" duration="616000" />
+      <workItem from="1589273386112" duration="12028000" />
     </task>
     <servers />
   </component>
@@ -317,14 +331,14 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/PlayerInside.py</url>
-          <line>32</line>
-          <option name="timeStamp" value="45" />
+          <url>file://$PROJECT_DIR$/ConcatenateWidget.py</url>
+          <line>60</line>
+          <option name="timeStamp" value="47" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/ConcatenateWidget.py</url>
-          <line>48</line>
-          <option name="timeStamp" value="53" />
+          <url>file://$PROJECT_DIR$/CutDIalog.py</url>
+          <line>64</line>
+          <option name="timeStamp" value="52" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -336,21 +350,23 @@
     <SUITE FILE_PATH="coverage/audio_editor$contest.coverage" NAME="contest Coverage Results" MODIFIED="1587221439748" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/audio_editor$download_samples.coverage" NAME="download_samples Coverage Results" MODIFIED="1588350812165" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/audio_editor$site_attac.coverage" NAME="site_attac Coverage Results" MODIFIED="1587221409350" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tmp" />
-    <SUITE FILE_PATH="coverage/audio_editor$CutDIalog.coverage" NAME="CutDIalog Coverage Results" MODIFIED="1588256772486" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/audio_editor$abacaba.coverage" NAME="abacaba Coverage Results" MODIFIED="1587706373762" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/audio_editor$ConcatenateWidget.coverage" NAME="ConcatenateWidget Coverage Results" MODIFIED="1588331750063" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/audio_editor$CutDIalog.coverage" NAME="CutDIalog Coverage Results" MODIFIED="1589103706827" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/audio_editor$ConcatenateWidget.coverage" NAME="ConcatenateWidget Coverage Results" MODIFIED="1588963526737" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/audio_editor$player.coverage" NAME="player Coverage Results" MODIFIED="1586106786386" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/audio_editor_master$Editor.coverage" NAME="Editor Coverage Results" MODIFIED="1588348063644" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/audio_editor$TwoPointersSlider.coverage" NAME="TwoPointersSlider Coverage Results" MODIFIED="1587646120043" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/audio_editor$TwoPointersSlider.coverage" NAME="TwoPointersSlider Coverage Results" MODIFIED="1589104248099" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/audio_editor$CutDIalig.coverage" NAME="CutDIalig Coverage Results" MODIFIED="1587208435429" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/audio_editor$one_more_test.coverage" NAME="one_more_test Coverage Results" MODIFIED="1587810467516" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/audio_editor$Editor.coverage" NAME="Editor Coverage Results" MODIFIED="1588604695001" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/audio_editor$Fragment.coverage" NAME="Fragment Coverage Results" MODIFIED="1588604687867" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/audio_editor$Editor.coverage" NAME="Editor Coverage Results" MODIFIED="1589288687510" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/audio_editor$Fragment.coverage" NAME="Fragment Coverage Results" MODIFIED="1589287564958" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/audio_editor_master$TwoPointersSlider.coverage" NAME="TwoPointersSlider Coverage Results" MODIFIED="1588331379384" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/audio_editor$test.coverage" NAME="test Coverage Results" MODIFIED="1588595898714" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/audio_editor$FragmentMimeData.coverage" NAME="FragmentMimeData Coverage Results" MODIFIED="1588670197302" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/audio_editor$test.coverage" NAME="test Coverage Results" MODIFIED="1589273785841" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/audio_editor_master$ConcatenateWidget.coverage" NAME="ConcatenateWidget Coverage Results" MODIFIED="1588333876505" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/audio_editor$Player.coverage" NAME="Player Coverage Results" MODIFIED="1588259807519" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/audio_editor_master$PlayerInside.coverage" NAME="PlayerInside Coverage Results" MODIFIED="1588342951290" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/audio_editor$classWork.coverage" NAME="classWork Coverage Results" MODIFIED="1587575119960" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/audio_editor$PlayerInside.coverage" NAME="PlayerInside Coverage Results" MODIFIED="1588961584341" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

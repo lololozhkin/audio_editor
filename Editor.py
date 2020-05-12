@@ -2,37 +2,42 @@ import sys
 from PyQt5 import QtMultimedia
 from PyQt5.QtWidgets import QListWidget, QAction, QMenu, \
     QFileDialog, QVBoxLayout, QHBoxLayout, QPushButton, QWidget, QSlider, \
-    QMainWindow, QApplication, QListWidgetItem
-from PyQt5.QtGui import QIcon
+    QMainWindow, QApplication, QListWidgetItem, QSpinBox
+from PyQt5.QtGui import QIcon, QMouseEvent
 from PyQt5.QtCore import Qt, QEvent, QObject, QUrl
-from PlayerInside import PlayerInside
+from EditorInside import EditorInside
 from CutDIalog import CutDialog
 from ConcatenateWidget import ConcatenateWidget
 from FragmentPlayer import FragmentPlayer
-from Fragment import Fragment
 
 
 class Editor(QMainWindow):
     def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
         self.statusBar()
-        self.player = PlayerInside()
+        self.player = EditorInside()
         self.init_ui()
 
         self.play_action.triggered.connect(self.load_track)
 
         self.delete_file.setShortcut('Del')
         self.delete_file.triggered.connect(
-            lambda: self.delete_files(self.list_widget.selectedIndexes()))
+            lambda: self.delete_fragments(self.list_widget.selectedIndexes()))
 
         self.cut_file.setShortcut('Ctrl+K')
         self.cut_file.triggered.connect(self.on_cut_file)
 
         self.concatenate_action.triggered.connect(self.on_concatenate)
 
+        self.edit_cut_action.triggered.connect(self.on_edit_cut)
+
+        self.save_action.triggered.connect(self.on_save_triggered)
+
         self.context_menu.addAction(self.play_action)
         self.context_menu.addAction(self.cut_file)
+        self.context_menu.addAction(self.edit_cut_action)
         self.context_menu.addAction(self.concatenate_action)
+        self.context_menu.addAction(self.save_action)
         self.context_menu.addAction(self.delete_file)
 
         self.open_file.setShortcut('Ctrl+O')
@@ -41,6 +46,9 @@ class Editor(QMainWindow):
         self.file_menu.addAction(self.open_file)
 
         self.list_widget.installEventFilter(self)
+        self.list_widget.itemDoubleClicked.connect(
+            lambda item: self.load_track()
+        )
 
         self.addAction(self.delete_file)
         self.addAction(self.play_action)
@@ -60,15 +68,20 @@ class Editor(QMainWindow):
             self.time_slider.setValue)
         self.q_player.volumeChanged.connect(self.volume_slider.setValue)
 
+        self.timecode.valueChanged.connect(self.on_timecode_value_changed)
+        self.time_slider.valueChanged.connect(self.timecode.setValue)
+
         self.q_player.setVolume(50)
 
         self.concatenate_widget.concatenate_finished.connect(self.concatenate)
+
 
         self.hbox.addWidget(self.play_pause_button)
         self.hbox.addWidget(self.stop_button)
         self.hbox.addWidget(self.volume_slider)
 
         self.vbox.addWidget(self.list_widget)
+        self.vbox.addWidget(self.timecode)
         self.vbox.addLayout(self.hbox)
         self.vbox.addWidget(self.time_slider)
         self.vbox.addWidget(self.concatenate_widget)
@@ -105,6 +118,15 @@ class Editor(QMainWindow):
                                           'Add to concatenate list',
                                           self)
         self.concatenate_action.setStatusTip('Add to concatenate list')
+
+        self.edit_cut_action = QAction(QIcon('img/cut.png'),
+                                       'Edit file cutting',
+                                       self)
+        self.edit_cut_action.setStatusTip('Edit range of file cutting')
+
+        self.save_action = QAction(QIcon('img/save_as.png'),
+                                   'Save fragment',
+                                   self)
 
         self.concatenate_widget = ConcatenateWidget(self)
 
@@ -148,12 +170,23 @@ class Editor(QMainWindow):
         self.time_slider.setMinimum(0)
         self.volume_slider.setMinimum(0)
 
+        self.timecode = QSpinBox(self)
+        self.timecode.setMinimum(0)
+        self.timecode.setSuffix(' ms')
+        self.timecode.setEnabled(False)
+
         self.q_player = FragmentPlayer()
         self.q_player.setNotifyInterval(100)
 
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
-        if obj is self.list_widget and event.type() == QEvent.ContextMenu:
-            if obj.itemAt(event.pos()) is not None:
+        if obj is self.list_widget:
+            if event.type() == QEvent.ContextMenu \
+                    and obj.itemAt(event.pos()) is not None:
+                if obj.itemAt(event.pos()).data(Qt.UserRole).is_parent():
+                    a = QListWidgetItem()
+                    self.edit_cut_action.setEnabled(False)
+                else:
+                    self.edit_cut_action.setEnabled(True)
                 self.context_menu.exec_(event.globalPos())
                 return True
 
@@ -178,11 +211,15 @@ class Editor(QMainWindow):
         self.player.add_fragment(fragment)
         self.list_update()
 
-    def delete_files(self, indexes):
+    def delete_fragments(self, indexes):
         if len(indexes) > 0:
             for index in indexes:
-                self.player.remove_file(index.row())
+                self.player.remove_fragment(index.row())
             self.list_update()
+
+    def remove_fragment(self, index):
+        self.player.remove_fragment(index)
+        self.list_update()
 
     def list_update(self):
         self.list_widget.clear()
@@ -199,13 +236,17 @@ class Editor(QMainWindow):
             self.play_pause_button.setIcon(QIcon('img/play.png'))
             self.play_pause_button.setText('Play')
             self.play_pause_button.setEnabled(True)
+            self.timecode.setEnabled(True)
 
             self.stop_button.setEnabled(True)
 
             self.time_slider.setEnabled(True)
             self.time_slider.setMaximum(self.q_player.duration())
+            self.timecode.setMaximum(self.q_player.duration())
 
             self.volume_slider.setEnabled(True)
+
+            self.q_player.play()
 
         elif state == QtMultimedia.QMediaPlayer.EndOfMedia:
             self.q_player.stop()
@@ -214,6 +255,7 @@ class Editor(QMainWindow):
             self.play_pause_button.setIcon(QIcon('img/play.png'))
             self.play_pause_button.setText('Play')
             self.play_pause_button.setEnabled(True)
+            self.timecode.setEnabled(True)
 
             self.stop_button.setEnabled(False)
 
@@ -223,6 +265,7 @@ class Editor(QMainWindow):
             self.time_slider.setValue(0)
             self.time_slider.setEnabled(False)
             self.volume_slider.setEnabled(False)
+            self.timecode.setEnabled(False)
 
             self.play_pause_button.setIcon(QIcon('img/play.png'))
             self.play_pause_button.setText('Play')
@@ -265,7 +308,25 @@ class Editor(QMainWindow):
             self.list_widget.currentRow())
         self.q_player.set_fragment(fragment)
 
+    def on_edit_cut(self):
+        self.q_player.pause()
+        index = self.list_widget.currentRow()
+        fragment = self.player.get_fragment_in_index(index)
+        cut_dialog = CutDialog(self)
+        cut_dialog.set_fragment_for_editing(fragment)
+        cut_dialog.setWindowModality(Qt.WindowModal)
+        cut_dialog.fileCut.connect(
+            lambda fragm: self.on_fileCut(fragm, cut_dialog, index))
+        cut_dialog.show()
+        cut_dialog.exec_()
+
+    def on_fileCut(self, fragment, dialog, index):
+        self.add_fragment(fragment)
+        dialog.close()
+        self.remove_fragment(index)
+
     def on_cut_file(self):
+        self.q_player.pause()
         fragment = self.player.get_fragment_in_index(
             self.list_widget.currentRow())
         cut_dialog = CutDialog(self)
@@ -276,12 +337,26 @@ class Editor(QMainWindow):
         cut_dialog.exec_()
 
     def on_concatenate(self):
-        file_to_add = self.player.get_fragment_in_index(
-            self.list_widget.currentRow())
-        self.concatenate_widget.add_path(file_to_add)
+        fragment_to_add = self.list_widget.selectedItems()[0].data(Qt.UserRole)
+        self.concatenate_widget.add_fragment(fragment_to_add)
 
-    def concatenate(self, path):
-        self.add_files([path])
+    def concatenate(self, fragment):
+        self.add_fragment(fragment)
+
+    def on_timecode_value_changed(self, value):
+        self.time_slider.setValue(value)
+        if self.q_player.state() == QtMultimedia.QMediaPlayer.PausedState:
+            self.q_player.set_fragment_position(self.time_slider.value())
+
+    def on_save_triggered(self):
+        fragment = self.player.get_fragment_in_index(
+            self.list_widget.currentRow())
+        path, ext = QFileDialog.getSaveFileName(self,
+                                                'Save File',
+                                                filter='wav;;mp3')
+        if path and ext:
+            path = f'{path}.{ext}'
+            EditorInside.save_fragment(fragment, path)
 
 
 def main():

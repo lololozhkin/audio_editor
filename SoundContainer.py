@@ -2,6 +2,9 @@ from PyQt5 import QtCore, QtGui, Qt
 from PyQt5.QtWidgets import QWidget, QPushButton
 from PyQt5.QtGui import QPainter, QPen, QColor, QDrag
 from PyQt5.QtCore import QUrl, QRect, QSize, QPoint, QLine, QMimeData
+
+from Fragment import Fragment
+from FragmentMimeData import FragmentMimeData
 import os
 
 
@@ -60,36 +63,31 @@ QComboBox:hover,QPushButton:hover
 class SongButton(QPushButton):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setText("Nokia Arabic Ringtone")
         self.setFixedSize(QSize(250, 100))
         self.setStyleSheet(BTN_STYLE)
         self.index = 0
         self.parent = parent
+        self._fragment = None
 
     def __str__(self):
         return self.text()
 
     @property
-    def path(self):
-        return self._path
-
-    @path.setter
-    def path(self, new_path):
-        self._path = new_path
-
-    def set_path(self, path):
-        self.setText(os.path.split(path)[1])
-        self.path = path
+    def fragment(self):
+        return self._fragment
 
     def set_index(self, index):
         self.index = index
 
+    def set_fragment(self, fragment):
+        self._fragment = fragment
+        self.setText(fragment.name)
+
     def mouseMoveEvent(self, e: QtGui.QMouseEvent):
         if e.buttons() != QtCore.Qt.LeftButton:
             return
-        mime_data = QMimeData()
-        mime_data.setText(self.path)
-        mime_data.setUrls([QUrl.fromLocalFile(self.path)])
+        mime_data = FragmentMimeData()
+        mime_data.set_fragment(self.fragment)
 
         drag = QDrag(self)
         drag.setMimeData(mime_data)
@@ -102,7 +100,7 @@ class SongButton(QPushButton):
 
 
 class SoundContainer(QWidget):
-    fileAdded = QtCore.pyqtSignal(int)
+    fragmentAdded = QtCore.pyqtSignal(int)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -132,29 +130,19 @@ class SoundContainer(QWidget):
             width = self.parent().width() if self.parent() is not None else 500
         return width
 
-    def add_sound(self, sound_path):
-        if isinstance(sound_path, QUrl):
-            sound_path = sound_path.path()
-        elif isinstance(sound_path, str):
-            sound_path = QUrl.fromLocalFile(sound_path).path()
-        else:
+    def add_fragment(self, fragment):
+        if not isinstance(fragment, Fragment):
             raise ValueError
-
         sound = SongButton(self)
-        sound.set_path(sound_path)
+        sound.set_fragment(fragment)
         self.sounds.append(sound)
         self.rebuild()
 
-    def insert_sound(self, sound_path, index):
-        if isinstance(sound_path, QUrl):
-            sound_path = sound_path.path()
-        elif isinstance(sound_path, str):
-            sound_path = QUrl.fromLocalFile(sound_path).path()
-        else:
+    def insert_fragment(self, fragment, index):
+        if not isinstance(fragment, Fragment):
             raise ValueError
-
         sound = SongButton(self)
-        sound.set_path(sound_path)
+        sound.set_fragment(fragment)
         self.sounds.insert(index, sound)
         self.rebuild()
 
@@ -198,11 +186,8 @@ class SoundContainer(QWidget):
     def dragEnterEvent(self, e: QtGui.QDragEnterEvent):
         self.is_dragging = True
         mime_data = e.mimeData()
-        if mime_data.hasUrls():
-            if any(map(lambda url: os.path.splitext(url.path())[1] in self.ext,
-                       mime_data.urls())):
-
-                e.accept()
+        if mime_data.hasFormat("user/fragment"):
+            e.accept()
         else:
             e.ignore()
 
@@ -213,15 +198,9 @@ class SoundContainer(QWidget):
 
     def dropEvent(self, e: QtGui.QDropEvent):
         mime_data = e.mimeData()
-        if mime_data.hasUrls():
-            index = self.index_to_insert
-            for url in\
-                    filter(lambda x: os.path.splitext(x.path())[1] in self.ext,
-                           mime_data.urls()):
-
-                self.insert_sound(url, index)
-                index += 1
-
+        if mime_data.hasFormat("user/fragment"):
+            sound = SongButton(self)
+            sound.set_fragment(mime_data.fragment_data())
         self.insert_line_pos = -10
         self.update()
 
@@ -235,11 +214,10 @@ class SoundContainer(QWidget):
             y = self.top_padding
             sound.setGeometry(QRect(QPoint(x, y), QSize(self.sound_width,
                                                         self.sound_height)))
-            sound.set_path(sound.path)
             sound.set_index(index)
             sound.show()
 
-        self.fileAdded.emit(len(self.sounds))
+        self.fragmentAdded.emit(len(self.sounds))
 
     def clear(self):
         for sound in self.sounds:
