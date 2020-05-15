@@ -33,6 +33,12 @@ class EditorInside:
     def get_fragment_in_index(self, index):
         return self._music_fragments_list[index]
 
+    def clear(self):
+        self._music_fragments_list.clear()
+
+    def fragments(self):
+        return self._music_fragments_list.copy()
+
     @staticmethod
     def cut_fragment(parent, start, end, name='Result'):
         fragment = Fragment(start, end, parent)
@@ -87,6 +93,12 @@ class EditorInside:
             ext = ext[1:]
 
         segment.export(path, format=ext)
+
+    @staticmethod
+    def dir_for_os(path, ext):
+        if sys.platform.find('linux') != -1:
+            return path + ext
+        return path
 
 
 

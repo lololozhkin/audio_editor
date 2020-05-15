@@ -124,11 +124,11 @@ class SoundContainer(QWidget):
 
     @property
     def cur_width(self):
-        width = (len(self.sounds)) *\
+        width_needed = (len(self.sounds)) *\
                 (self.sound_width + self.sound_distance) + self.side_padding
-        if width - self.side_padding == 0:
-            width = self.parent().width() if self.parent() is not None else 500
-        return width
+        width_parent = self.parent().width() if self.parent() is not None\
+            else 500
+        return max(width_needed, width_parent)
 
     def add_fragment(self, fragment):
         if not isinstance(fragment, Fragment):
@@ -155,7 +155,7 @@ class SoundContainer(QWidget):
         if self.is_dragging:
             rect_width = self.sound_width + self.sound_distance
             x = int(e.pos().x())
-            rect_num = x // rect_width
+            rect_num = min(x // rect_width, len(self.sounds) - 1)
             rect_center = rect_width * rect_num + (self.sound_width / 2)
             rect_center += self.side_padding
             if rect_center < x:
@@ -201,7 +201,9 @@ class SoundContainer(QWidget):
         if mime_data.hasFormat("user/fragment"):
             sound = SongButton(self)
             sound.set_fragment(mime_data.fragment_data())
+            self.sounds.insert(self.index_to_insert, sound)
         self.insert_line_pos = -10
+        self.rebuild()
         self.update()
 
     def rebuild(self):
@@ -224,6 +226,9 @@ class SoundContainer(QWidget):
             sound.close()
         self.sounds.clear()
         self.rebuild()
+
+    def get_fragments(self):
+        return map(lambda sound: sound.fragment, self.sounds)
 
 
 def main():

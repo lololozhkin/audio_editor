@@ -3,19 +3,20 @@ from PyQt5 import QtMultimedia
 from PyQt5.QtWidgets import QListWidget, QAction, QMenu, \
     QFileDialog, QVBoxLayout, QHBoxLayout, QPushButton, QWidget, QSlider, \
     QMainWindow, QApplication, QListWidgetItem, QSpinBox
-from PyQt5.QtGui import QIcon, QMouseEvent
-from PyQt5.QtCore import Qt, QEvent, QObject, QUrl
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import Qt, QEvent, QObject
 from EditorInside import EditorInside
 from CutDIalog import CutDialog
 from ConcatenateWidget import ConcatenateWidget
 from FragmentPlayer import FragmentPlayer
+from Fragment import Fragment
 
 
 class Editor(QMainWindow):
     def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
         self.statusBar()
-        self.player = EditorInside()
+        self.editor = EditorInside()
         self.init_ui()
 
         self.play_action.triggered.connect(self.load_track)
@@ -44,6 +45,12 @@ class Editor(QMainWindow):
         self.open_file.triggered.connect(self.show_dialog)
 
         self.file_menu.addAction(self.open_file)
+
+        self.open_project_action.triggered.connect(self.on_open_project)
+        self.save_project_action.triggered.connect(self.on_save_project)
+
+        self.project_menu.addAction(self.open_project_action)
+        self.project_menu.addAction(self.save_project_action)
 
         self.list_widget.installEventFilter(self)
         self.list_widget.itemDoubleClicked.connect(
@@ -110,6 +117,14 @@ class Editor(QMainWindow):
         self.delete_file.setStatusTip('Delete file from the list')
 
         self.file_menu = self.menubar.addMenu('File')
+        self.project_menu = self.menubar.addMenu('Project')
+
+        self.save_project_action = QAction(QIcon('img/save_as.png'),
+                                           'Save project',
+                                           self)
+        self.open_project_action = QAction(QIcon('img/open.png'),
+                                           'Open project',
+                                           self)
 
         self.play_action = QAction(QIcon('img/play.png'), 'Play file', self)
         self.play_action.setStatusTip('Play current file')
@@ -199,31 +214,37 @@ class Editor(QMainWindow):
                                                   caption='Add files',
                                                   filter=files_choose_string)
         file_names = file_names[0]
-        self.add_files(file_names)
+        if file_names:
+            self.add_files(file_names)
 
     def add_files(self, file_names):
         if file_names:
             for file_name in file_names:
-                self.player.add_file_path(file_name)
+                self.editor.add_file_path(file_name)
             self.list_update()
 
     def add_fragment(self, fragment):
-        self.player.add_fragment(fragment)
+        self.editor.add_fragment(fragment)
         self.list_update()
 
     def delete_fragments(self, indexes):
         if len(indexes) > 0:
             for index in indexes:
-                self.player.remove_fragment(index.row())
+                self.editor.remove_fragment(index.row())
             self.list_update()
 
+    def clear(self):
+        self.editor.clear()
+        self.concatenate_widget.container.clear()
+        self.list_update()
+
     def remove_fragment(self, index):
-        self.player.remove_fragment(index)
+        self.editor.remove_fragment(index)
         self.list_update()
 
     def list_update(self):
         self.list_widget.clear()
-        for fragment in self.player.get_fragments():
+        for fragment in self.editor.get_fragments():
             list_item = QListWidgetItem(self.list_widget)
             list_item.setText(fragment.name)
             list_item.setData(Qt.UserRole, fragment)
@@ -304,14 +325,14 @@ class Editor(QMainWindow):
             self.q_player.play()
 
     def load_track(self):
-        fragment = self.player.get_fragment_in_index(
+        fragment = self.editor.get_fragment_in_index(
             self.list_widget.currentRow())
         self.q_player.set_fragment(fragment)
 
     def on_edit_cut(self):
         self.q_player.pause()
         index = self.list_widget.currentRow()
-        fragment = self.player.get_fragment_in_index(index)
+        fragment = self.editor.get_fragment_in_index(index)
         cut_dialog = CutDialog(self)
         cut_dialog.set_fragment_for_editing(fragment)
         cut_dialog.setWindowModality(Qt.WindowModal)
@@ -327,7 +348,7 @@ class Editor(QMainWindow):
 
     def on_cut_file(self):
         self.q_player.pause()
-        fragment = self.player.get_fragment_in_index(
+        fragment = self.editor.get_fragment_in_index(
             self.list_widget.currentRow())
         cut_dialog = CutDialog(self)
         cut_dialog.set_fragment(fragment)
@@ -349,14 +370,54 @@ class Editor(QMainWindow):
             self.q_player.set_fragment_position(self.time_slider.value())
 
     def on_save_triggered(self):
-        fragment = self.player.get_fragment_in_index(
+        fragment = self.editor.get_fragment_in_index(
             self.list_widget.currentRow())
         path, ext = QFileDialog.getSaveFileName(self,
                                                 'Save File',
-                                                filter='wav;;mp3')
+                                                filter='*.wav;;*.mp3')
         if path and ext:
-            path = f'{path}.{ext}'
+            path = f'{path}{ext[1:]}'
             EditorInside.save_fragment(fragment, path)
+
+    def on_open_project(self):
+        file = QFileDialog.getOpenFileName(self,
+                                           'Open project',
+                                           filter='Editor File(*.edf)')
+        file = file[0]
+        if file:
+            self.clear()
+            in_list = True
+            with open(file, 'r') as f:
+                for line in f:
+                    if not line:
+                        continue
+
+                    if line.strip() == '---':
+                        in_list = False
+                        continue
+
+                    if in_list:
+                        self.add_fragment(Fragment.from_repr(line.strip()))
+                    else:
+                        self.concatenate_widget.add_fragment(
+                            Fragment.from_repr(line.strip())
+                        )
+
+    def on_save_project(self):
+        file, ext = QFileDialog.getSaveFileName(self,
+                                                'Save project',
+                                                filter='*.edf')
+        file = EditorInside.dir_for_os(file, ext[1:])
+
+        if file:
+            with open(file, 'w') as f:
+                for fragment in self.editor.fragments():
+                    f.write(repr(fragment) + '\n')
+
+                f.write('---\n')
+
+                for fragment in self.concatenate_widget.get_fragments():
+                    f.write(repr(fragment) + '\n')
 
 
 def main():

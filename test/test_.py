@@ -60,6 +60,9 @@ class TestFragment:
         assert abs(get_wav_duration(PATH)
                    - TestFragment.main_fragment.duration) < 1
 
+    def test_from_repr(self):
+        pass
+
 
 class TestOperations:
     def test_concatenate(self):

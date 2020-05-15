@@ -65,3 +65,6 @@ class ConcatenateWidget(QWidget):
 
             self.container.clear()
             self.concatenate_finished.emit(fragment)
+
+    def get_fragments(self):
+        return self.container.get_fragments()

@@ -1,8 +1,16 @@
 from pydub import AudioSegment
 import os
+import re
 
 
 class Fragment:
+    _r = re.compile(r'\(is_parent:(?P<is_parent>.+?),'
+                    r'source:(?P<source>.+?),'
+                    r'name:(?P<name>.+?),'
+                    r'start:(?P<start>.+?),'
+                    r'end:(?P<end>.+?),'
+                    r'parent:(?P<parent>.+)\)')
+
     def __init__(self, start, end, parent=None):
         self._parent = parent
         self._start = start
@@ -34,12 +42,20 @@ class Fragment:
                ^ (self.absolute_start * 397) \
                ^ (self.duration * 179)
 
+    def __repr__(self):
+        return f'(is_parent:{self._is_parent},' \
+               f'source:{self.source_path},' \
+               f'name:{self.name},' \
+               f'start:{self.start},' \
+               f'end:{self.end},' \
+               f'parent:{repr(self.parent)})'
+
     def is_parent(self):
         return self._is_parent
 
     @property
     def name(self):
-        return self._name if self._name is not None\
+        return self._name if self._name is not None \
             else os.path.split(self.source_path)[1]
 
     @property
@@ -72,10 +88,12 @@ class Fragment:
 
     @property
     def parent(self):
+        if self._parent is None:
+            return None
+
         fragment = Fragment(self._parent_absolute_start,
                             self._parent_absolute_end)
         fragment.set_source(self.source_path)
-        fragment._is_parent = True
         return fragment
 
     def set_start(self, start):
@@ -100,3 +118,39 @@ class Fragment:
         fragment._is_parent = True
         return fragment
 
+    @staticmethod
+    def from_repr(string):
+        m = re.match(Fragment._r, string)
+        is_parent = m['is_parent'] == 'True'
+        source = m['source']
+
+        if is_parent:
+            return Fragment.parent_fragment(source)
+
+        name = m['name']
+        start = int(m['start'])
+        end = int(m['end'])
+        parent = None if m['parent'] == 'None' \
+            else Fragment.from_repr(m['parent'])
+
+        fragment = Fragment(start, end, parent)
+        fragment.set_name(name)
+        fragment.set_source(source)
+
+        return fragment
+
+
+PATH = r"D:\PythonTask\ringtone2.wav"
+
+
+def main():
+    fragment1 = Fragment.parent_fragment(PATH)
+    print(repr(fragment1))
+    fragment2 = Fragment(1000, 10000, fragment1)
+    print(repr(fragment2))
+    fragment3 = Fragment.from_repr(repr(fragment2))
+    print(repr(fragment3))
+
+
+if __name__ == '__main__':
+    main()
