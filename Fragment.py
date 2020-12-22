@@ -15,6 +15,7 @@ class Fragment:
         self._parent = parent
         self._start = start
         self._end = end
+        self._is_playing = False
 
         self._source_path = parent.source_path if parent is not None else None
 
@@ -55,8 +56,7 @@ class Fragment:
 
     @property
     def name(self):
-        return self._name if self._name is not None \
-            else os.path.split(self.source_path)[1]
+        return self._name if self._name is not None else self.source_path
 
     @property
     def source_path(self):
@@ -95,6 +95,18 @@ class Fragment:
                             self._parent_absolute_end)
         fragment.set_source(self.source_path)
         return fragment
+
+    @property
+    def is_playing(self):
+        return self._is_playing
+
+    @is_playing.setter
+    def is_playing(self, state):
+        self._is_playing = state
+
+    @property
+    def shown_name(self):
+        return self.name + ('     (Playing Now)' if self.is_playing else '')
 
     def set_start(self, start):
         self._start = start
@@ -140,16 +152,8 @@ class Fragment:
         return fragment
 
 
-PATH = r"D:\PythonTask\ringtone2.wav"
-
-
 def main():
-    fragment1 = Fragment.parent_fragment(PATH)
-    print(repr(fragment1))
-    fragment2 = Fragment(1000, 10000, fragment1)
-    print(repr(fragment2))
-    fragment3 = Fragment.from_repr(repr(fragment2))
-    print(repr(fragment3))
+    pass
 
 
 if __name__ == '__main__':

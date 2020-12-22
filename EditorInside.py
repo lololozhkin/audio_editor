@@ -11,7 +11,7 @@ class EditorInside:
 
     try:
         os.mkdir(path_to_tmp)
-    except Exception as e:
+    except FileExistsError as e:
         pass
 
     def __init__(self):
@@ -101,11 +101,8 @@ class EditorInside:
         return path
 
 
-
 def main():
-    print(sys.platform)
-    path = 'abacaba.wav'
-    print(os.path.splitext(path))
+    pass
 
 
 if __name__ == '__main__':
