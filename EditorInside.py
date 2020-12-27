@@ -37,7 +37,7 @@ class EditorInside:
         self._music_fragments_list.clear()
 
     def fragments(self):
-        return self._music_fragments_list.copy()
+        return self._music_fragments_list
 
     @staticmethod
     def cut_fragment(parent, start, end, name='Result'):

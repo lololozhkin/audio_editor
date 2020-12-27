@@ -6,15 +6,17 @@ from PyQt5.QtCore import Qt, QSize
 from EditorInside import EditorInside
 from SoundContainer import SoundContainer
 from Fragment import Fragment
-import os
-import sys
 
 
 class ConcatenateWidget(QWidget):
     concatenate_finished = QtCore.pyqtSignal(Fragment)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, fragments=None):
         super().__init__(parent)
+        if fragments is None:
+            fragments = []
+        self.fragments = fragments
+
         self.init_ui()
 
         self.scroll_area.setWidget(self.container)
@@ -48,23 +50,34 @@ class ConcatenateWidget(QWidget):
             self.concatenate_btn.setEnabled(False)
 
     def on_concatenate_clicked(self):
-        name, ok = QInputDialog.getText(self,
-                                        'Fragment name',
-                                        'Enter fragment name',
-                                        text='fragment.wav')
+        input_text = 'Enter fragment name'
+        last_name = 'fragment.wav'
+        while True:
+            name, ok = QInputDialog.getText(self,
+                                            'Fragment name',
+                                            input_text,
+                                            text=last_name)
 
-        if ok:
-            self.setCursor(QCursor(Qt.WaitCursor))
-            self.concatenate_btn.setDisabled(True)
+            if ok:
+                if name in (fragment.name for fragment in self.fragments):
+                    input_text = 'Enter fragment name again.'
+                    last_name = name
+                    continue
 
-            fragments = map(lambda snd: snd.fragment, self.container.sounds)
-            fragment = EditorInside.concatenate(list(fragments), name)
+                self.setCursor(QCursor(Qt.WaitCursor))
+                self.concatenate_btn.setDisabled(True)
 
-            self.concatenate_btn.setEnabled(True)
-            self.unsetCursor()
+                fragments = map(lambda snd: snd.fragment, self.container.sounds)
+                fragment = EditorInside.concatenate(list(fragments), name)
 
-            self.container.clear()
-            self.concatenate_finished.emit(fragment)
+                self.concatenate_btn.setEnabled(True)
+                self.unsetCursor()
+
+                self.container.clear()
+                self.concatenate_finished.emit(fragment)
+                break
+            else:
+                break
 
     def get_fragments(self):
         return self.container.get_fragments()

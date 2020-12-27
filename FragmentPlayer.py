@@ -20,8 +20,6 @@ class FragmentPlayer(QtMultimedia.QMediaPlayer):
         self.set_fragment_position(0)
 
     def stop(self):
-        if self.state() in (QtMultimedia.QMediaPlayer.StoppedState, QtMultimedia.QMediaPlayer.PausedState):
-            return
         super().stop()
         self.set_fragment_position(0)
         self.pause()
@@ -30,7 +28,6 @@ class FragmentPlayer(QtMultimedia.QMediaPlayer):
         return self._fragment.duration
 
     def _on_position_changed(self, position):
-        print(position)
         if self._fragment is not None:
             calculated_pos = position - self._fragment.absolute_start
 

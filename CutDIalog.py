@@ -14,13 +14,14 @@ from FragmentPlayer import FragmentPlayer
 class CutDialog(QDialog):
     fileCut = QtCore.pyqtSignal(Fragment)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, fragments=None):
         super().__init__(parent)
         self.init_ui()
         self.player_inside = EditorInside()
         self.parent_fragment = None
         self._fragment = None
         self.editing = False
+        self.fragments = fragments if fragments is not None else []
 
         self.set_pos_btns.addWidget(self.left_to_main)
         self.set_pos_btns.addWidget(self.right_to_main)
@@ -96,27 +97,35 @@ class CutDialog(QDialog):
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
     def on_cut_button_clicked(self):
-        ok, text = self.show_dialog()
-        if ok:
-            self.setCursor(QCursor(Qt.WaitCursor))
-            self.play_pause_button.setEnabled(False)
-            self.cut_button.setEnabled(False)
+        cur_text = 'Enter fragment name'
+        while True:
+            ok, text = self.show_dialog(cur_text)
+            if ok:
+                if text in (fragment.name for fragment in self.fragments):
+                    cur_text = 'Enter fragment name again'
+                    continue
+                self.setCursor(QCursor(Qt.WaitCursor))
+                self.play_pause_button.setEnabled(False)
+                self.cut_button.setEnabled(False)
 
-            parent = self._fragment if not self.editing \
-                else self.parent_fragment
-            start = self.cut_slider.first_pointer_pos
-            end = self.cut_slider.second_pointer_pos
-            fragm = EditorInside.cut_fragment(parent, start, end, text)
-            self.fileCut.emit(fragm)
+                parent = self._fragment if not self.editing \
+                    else self.parent_fragment
+                start = self.cut_slider.first_pointer_pos
+                end = self.cut_slider.second_pointer_pos
+                fragm = EditorInside.cut_fragment(parent, start, end, text)
+                self.fileCut.emit(fragm)
 
-            self.play_pause_button.setEnabled(True)
-            self.cut_button.setEnabled(True)
-            self.unsetCursor()
+                self.play_pause_button.setEnabled(True)
+                self.cut_button.setEnabled(True)
+                self.unsetCursor()
+                break
+            else:
+                break
 
-    def show_dialog(self):
+    def show_dialog(self, cur_text='Enter fragment name'):
         text, ok = QInputDialog.getText(self,
                                         'Fragment name',
-                                        'Enter fragment name',
+                                        cur_text,
                                         text=self._fragment.name)
 
         return ok, text

@@ -1,8 +1,8 @@
 import sys
-from PyQt5 import QtMultimedia
+from PyQt5 import QtMultimedia, QtCore
 from PyQt5.QtWidgets import QListWidget, QAction, QMenu, \
     QFileDialog, QVBoxLayout, QHBoxLayout, QPushButton, QWidget, QSlider, \
-    QMainWindow, QApplication, QListWidgetItem, QSpinBox
+    QMainWindow, QApplication, QListWidgetItem, QSpinBox, QLabel
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QEvent, QObject
 from EditorInside import EditorInside
@@ -157,7 +157,7 @@ class Editor(QMainWindow):
             self
         )
 
-        self.concatenate_widget = ConcatenateWidget(self)
+        self.concatenate_widget = ConcatenateWidget(self, self.editor.fragments())
 
         self.context_menu = QMenu(self)
 
@@ -231,7 +231,11 @@ class Editor(QMainWindow):
             caption='Add files',
             filter=files_choose_string
         )
-        file_names = file_names[0]
+        file_names = set(file_names[0])
+        existing_files = set(
+            fragment.name for fragment in self.editor.fragments()
+        )
+        file_names -= existing_files
         if file_names:
             self.add_files(file_names)
 
@@ -264,9 +268,9 @@ class Editor(QMainWindow):
         self.list_widget.clear()
         for fragment in self.editor.get_fragments():
             list_item = QListWidgetItem(self.list_widget)
-            list_item.setText(fragment.shown_name)
             list_item.setData(Qt.UserRole, fragment)
             self.list_widget.addItem(list_item)
+            self.list_widget.setItemWidget(list_item, QLabel(fragment.shown_name))
 
     def init_player(self, state):
         if state == QtMultimedia.QMediaPlayer.LoadedMedia:
@@ -286,7 +290,6 @@ class Editor(QMainWindow):
             self.volume_slider.setEnabled(True)
 
             self.q_player.set_fragment_position(0)
-            print(f'from init player, {self.q_player.position()}')
             self.q_player.play()
 
         elif state == QtMultimedia.QMediaPlayer.EndOfMedia:
@@ -376,7 +379,7 @@ class Editor(QMainWindow):
         self.q_player.pause()
         fragment = self.editor.get_fragment_in_index(
             self.list_widget.currentRow())
-        cut_dialog = CutDialog(self)
+        cut_dialog = CutDialog(self, self.editor.fragments())
         cut_dialog.set_fragment(fragment)
         cut_dialog.setWindowModality(Qt.WindowModal)
         cut_dialog.fileCut.connect(self.add_fragment)

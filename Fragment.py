@@ -106,7 +106,7 @@ class Fragment:
 
     @property
     def shown_name(self):
-        return self.name + ('     (Playing Now)' if self.is_playing else '')
+        return self.name + ('<b> (Playing Now)</b>' if self.is_playing else '')
 
     def set_start(self, start):
         self._start = start
