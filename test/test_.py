@@ -1,5 +1,6 @@
 import sys
 import os
+import unittest
 import wave
 import contextlib
 from pydub import AudioSegment
@@ -25,7 +26,7 @@ def get_wav_duration(path):
         return duration * 1000
 
 
-class TestFragment:
+class TestFragment(unittest.TestCase):
     main_fragment = Fragment.parent_fragment(PATH)
 
     def test_creation(self):
@@ -64,7 +65,7 @@ class TestFragment:
         pass
 
 
-class TestOperations:
+class TestOperations(unittest.TestCase):
     def test_concatenate(self):
         try:
             first_path = os.path.join(os.getcwd(), 'test', 'first.wav')
@@ -106,5 +107,3 @@ class TestOperations:
         EditorInside.save_fragment(fragment, cut_path)
 
         assert (fragment.duration - get_wav_duration(cut_path)) < 1
-
-

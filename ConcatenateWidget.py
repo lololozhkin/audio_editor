@@ -67,7 +67,7 @@ class ConcatenateWidget(QWidget):
                 self.setCursor(QCursor(Qt.WaitCursor))
                 self.concatenate_btn.setDisabled(True)
 
-                fragments = map(lambda snd: snd.fragment, self.container.sounds)
+                fragments = (snd.fragment for snd in self.container.sounds)
                 fragment = EditorInside.concatenate(list(fragments), name)
 
                 self.concatenate_btn.setEnabled(True)

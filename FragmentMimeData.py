@@ -1,5 +1,4 @@
 from PyQt5.QtCore import QMimeData
-from Fragment import Fragment
 
 
 class FragmentMimeData(QMimeData):
@@ -20,14 +19,8 @@ class FragmentMimeData(QMimeData):
             return self._fragment
 
 
-PATH = r"D:\Downloads\nokiaarabicringtonenokiaarabicringtone_(st-tancpol.ru).mp3"
-
-
 def main():
-    a = FragmentMimeData()
-    fragment = Fragment.parent_fragment(PATH)
-    a.set_fragment(fragment)
-    print(a.fragment_data())
+    pass
 
 
 if __name__ == "__main__":

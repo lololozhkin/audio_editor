@@ -157,7 +157,10 @@ class Editor(QMainWindow):
             self
         )
 
-        self.concatenate_widget = ConcatenateWidget(self, self.editor.fragments())
+        self.concatenate_widget = ConcatenateWidget(
+            self,
+            self.editor.fragments()
+        )
 
         self.context_menu = QMenu(self)
 
@@ -270,7 +273,10 @@ class Editor(QMainWindow):
             list_item = QListWidgetItem(self.list_widget)
             list_item.setData(Qt.UserRole, fragment)
             self.list_widget.addItem(list_item)
-            self.list_widget.setItemWidget(list_item, QLabel(fragment.shown_name))
+            self.list_widget.setItemWidget(
+                list_item,
+                QLabel(fragment.shown_name)
+            )
 
     def init_player(self, state):
         if state == QtMultimedia.QMediaPlayer.LoadedMedia:
